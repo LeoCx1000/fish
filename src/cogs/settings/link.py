@@ -197,6 +197,16 @@ class Dropdown(discord.ui.Select):
 
 class DropdownView(discord.ui.View):
     def __init__(self, ctx: Context):
+        self.ctx = ctx
         super().__init__()
 
         self.add_item(Dropdown(ctx))
+
+    async def interaction_check(self, interaction: discord.Interaction):
+        if interaction.user and interaction.user == self.ctx.author:
+            return True
+        await interaction.response.send_message(
+            f'You can\'t use this, sorry. \nIf you\'d like to use this then run the command `{self.ctx.command}{self.ctx.invoked_subcommand or ""}`',
+            ephemeral=True,
+        )
+        return False
